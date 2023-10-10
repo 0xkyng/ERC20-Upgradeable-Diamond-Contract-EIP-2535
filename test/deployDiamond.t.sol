@@ -45,7 +45,7 @@ contract DiamondDeployer is DiamondUtils, IDiamondCut {
         //upgrade diamond with facets
 
         //build cut struct
-        FacetCut[] memory cut = new FacetCut[](2);
+        FacetCut[] memory cut = new FacetCut[](3);
 
         cut[0] = (
             FacetCut({
@@ -67,7 +67,7 @@ contract DiamondDeployer is DiamondUtils, IDiamondCut {
             FacetCut({
                 facetAddress: address(erc20Facet),
                 action: FacetCutAction.Add,
-                functionSelectors: generateSelectors("OwnershipFacet")
+                functionSelectors: generateSelectors("ERC20Facet")
             })
         );
 
@@ -87,4 +87,50 @@ contract DiamondDeployer is DiamondUtils, IDiamondCut {
     function testName() public {
         assertEq(ERC20Facet(address(diamond)).name(), "ERC20_DIAMOND");
     }
+
+    function testSymbol() public {
+        assertEq(ERC20Facet(address(diamond)).symbol(), "ERC20");
+    }
+
+    function testDecimals() public {
+        assertEq(ERC20Facet(address(diamond)).decimals(), 18);
+    }
+
+    function testTotalSupply() public {
+        assertEq(ERC20Facet(address(diamond)).totalSupply(), 1000000000000000000);
+    }
+
+    function testBalanceOf() public {
+        ERC20Facet(address(diamond)).mint(address(this), 1000000000000000000);
+        assertEq(ERC20Facet(address(diamond)).balanceOf(address(this)), 1000000000000000000);
+    }
+
+    function testTransfer() public {
+        ERC20Facet(address(diamond)).mint(address(this), 1000000000000000000);
+        ERC20Facet(address(diamond)).transfer(address(0x11), 1000000000000000000);
+        assertEq(ERC20Facet(address(diamond)).balanceOf(address(0x11)), 1000000000000000000);
+    }
+
+    function testAllowance() public {
+        ERC20Facet(address(diamond)).mint(address(this), 1000000000000000000);
+        ERC20Facet(address(diamond)).approve(address(0x11), 1000000000000000000);
+        assertEq(ERC20Facet(address(diamond)).allowance(address(this), address(0x11)), 1000000000000000000);
+    }
+
+    function testApprove() public {
+        ERC20Facet(address(diamond)).mint(address(this), 1000000000000000000);
+        ERC20Facet(address(diamond)).approve(address(0x11), 1000000000000000000);
+        assertEq(ERC20Facet(address(diamond)).allowance(address(this), address(0x11)), 1000000000000000000);
+    }
+
+    function testTransferFrom() public {
+        ERC20Facet(address(diamond)).mint(address(this), 1e6);
+        ERC20Facet(address(diamond)).approve(address(this), 1e5);
+        ERC20Facet(address(diamond)).transferFrom(address(this), address(0x11), 1e5);
+        assertEq(ERC20Facet(address(diamond)).balanceOf(address(0x11)), 1e5);
+    }
+
+   
+
+
 }

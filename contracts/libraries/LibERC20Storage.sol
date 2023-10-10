@@ -17,12 +17,12 @@ library LibErc20 {
         address _owner;
     }
 
-    // function erc20Storage() internal pure returns (ERC20Storage storage ds) {
-    //     bytes32 position = ERC20_STORAGE_POSITION;
-    //     assembly {
-    //         ds.slot := position
-    //     }
-    // }
+    function erc20Storage() internal pure returns (ERC20Storage storage ds) {
+        bytes32 position = ERC20_STORAGE_POSITION;
+        assembly {
+            ds.slot := position
+        }
+    }
 }
 
 // struct ERC20Storage {
